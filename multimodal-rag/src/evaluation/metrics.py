@@ -1,7 +1,7 @@
 """RAG evaluation metrics following Jason Liu's 6-tier framework."""
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from loguru import logger
 from openai import OpenAI
