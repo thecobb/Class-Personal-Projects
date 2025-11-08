@@ -85,7 +85,7 @@ def process_document(file, components):
         return False, None, None
 
 
-def query_system(question, components, top_k=5, use_reranking=True):
+def query_system(question, components, top_k=5, use_reranking=True, temperature=None):
     """Query the RAG system."""
     try:
         # Create retriever with current chunks
@@ -108,6 +108,10 @@ def query_system(question, components, top_k=5, use_reranking=True):
 
         # Extract chunks
         chunks_retrieved = [chunk for chunk, score in results]
+
+        # Update generator temperature if provided
+        if temperature is not None:
+            components["generator"].temperature = temperature
 
         # Generate answer
         with st.spinner("Generating answer..."):
@@ -248,7 +252,8 @@ def main():
                 question,
                 components,
                 top_k=top_k,
-                use_reranking=use_reranking
+                use_reranking=use_reranking,
+                temperature=temperature
             )
 
             if error:
