@@ -50,14 +50,14 @@ def initialize_system():
 
 def process_document(file, components):
     """Process uploaded document."""
+    # Save uploaded file temporarily
+    temp_path = Path(f"./temp/{file.name}")
+    temp_path.parent.mkdir(exist_ok=True)
+
+    with open(temp_path, "wb") as f:
+        f.write(file.getbuffer())
+
     try:
-        # Save uploaded file temporarily
-        temp_path = Path(f"./temp/{file.name}")
-        temp_path.parent.mkdir(exist_ok=True)
-
-        with open(temp_path, "wb") as f:
-            f.write(file.getbuffer())
-
         # Parse document
         with st.spinner("Parsing document..."):
             doc = components["parser"].parse(temp_path)
@@ -75,14 +75,15 @@ def process_document(file, components):
             st.session_state.chunks = []
         st.session_state.chunks.extend(chunks)
 
-        # Clean up
-        temp_path.unlink()
-
         return True, doc, chunks
 
     except Exception as e:
         logger.error(f"Error processing document: {e}")
         return False, None, None
+    finally:
+        # Always clean up temporary file
+        if temp_path.exists():
+            temp_path.unlink()
 
 
 def query_system(question, components, top_k=5, use_reranking=True):
