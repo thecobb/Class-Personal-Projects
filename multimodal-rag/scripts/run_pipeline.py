@@ -13,7 +13,7 @@ from src.document_processing import DocumentParser, RecursiveChunker
 from src.embeddings import EmbeddingService, ImageDescriber
 from src.evaluation import RAGEvaluator, SyntheticDataGenerator
 from src.generation import MultimodalGenerator, QueryRouter
-from src.retrieval import HybridRetriever, MultiVectorRetriever, Reranker, VectorStoreFactory
+from src.retrieval import HybridRetriever, Reranker, VectorStoreFactory
 
 
 def main():
