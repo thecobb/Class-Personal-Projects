@@ -1,7 +1,7 @@
 """Query routing for multimodal RAG."""
 
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import instructor
 from loguru import logger
@@ -143,7 +143,7 @@ Determine:
                 keywords=query.split()[:5]
             )
 
-    def route(self, query: str) -> Dict[str, any]:
+    def route(self, query: str) -> Dict[str, Any]:
         """
         Route a query and return retrieval strategy.
 
@@ -224,7 +224,7 @@ class SimpleQueryRouter:
         # Default to text
         return QueryType.TEXT_ONLY
 
-    def route(self, query: str) -> Dict[str, any]:
+    def route(self, query: str) -> Dict[str, Any]:
         """
         Route query using simple rules.
 
