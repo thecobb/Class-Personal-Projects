@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from langchain.retrievers import BM25Retriever, EnsembleRetriever
+from langchain.retrievers import BM25Retriever
 from loguru import logger
 
 from ..config import settings
