@@ -86,7 +86,7 @@ def process_document(file, components):
             temp_path.unlink()
 
 
-def query_system(question, components, top_k=5, use_reranking=True, temperature=None):
+def query_system(question, components, top_k=5, use_reranking=True, hybrid_alpha=None, temperature=None):
     """Query the RAG system."""
     try:
         # Create retriever with current chunks
@@ -94,7 +94,7 @@ def query_system(question, components, top_k=5, use_reranking=True, temperature=
         if not chunks:
             return None, None, "No documents indexed yet. Please upload documents first."
 
-        retriever = HybridRetriever(components["vector_store"], chunks)
+        retriever = HybridRetriever(components["vector_store"], chunks, alpha=hybrid_alpha)
 
         # Retrieve
         with st.spinner("Retrieving relevant context..."):
@@ -254,6 +254,7 @@ def main():
                 components,
                 top_k=top_k,
                 use_reranking=use_reranking,
+                hybrid_alpha=hybrid_alpha,
                 temperature=temperature
             )
 
