@@ -50,14 +50,14 @@ def initialize_system():
 
 def process_document(file, components):
     """Process uploaded document."""
+    # Save uploaded file temporarily
+    temp_path = Path(f"./temp/{file.name}")
+    temp_path.parent.mkdir(exist_ok=True)
+
+    with open(temp_path, "wb") as f:
+        f.write(file.getbuffer())
+
     try:
-        # Save uploaded file temporarily
-        temp_path = Path(f"./temp/{file.name}")
-        temp_path.parent.mkdir(exist_ok=True)
-
-        with open(temp_path, "wb") as f:
-            f.write(file.getbuffer())
-
         # Parse document
         with st.spinner("Parsing document..."):
             doc = components["parser"].parse(temp_path)
@@ -75,17 +75,18 @@ def process_document(file, components):
             st.session_state.chunks = []
         st.session_state.chunks.extend(chunks)
 
-        # Clean up
-        temp_path.unlink()
-
         return True, doc, chunks
 
     except Exception as e:
         logger.error(f"Error processing document: {e}")
         return False, None, None
+    finally:
+        # Always clean up temporary file
+        if temp_path.exists():
+            temp_path.unlink()
 
 
-def query_system(question, components, top_k=5, use_reranking=True, hybrid_alpha=None):
+def query_system(question, components, top_k=5, use_reranking=True, hybrid_alpha=None, temperature=None):
     """Query the RAG system."""
     try:
         # Create retriever with current chunks
@@ -108,6 +109,10 @@ def query_system(question, components, top_k=5, use_reranking=True, hybrid_alpha
 
         # Extract chunks
         chunks_retrieved = [chunk for chunk, score in results]
+
+        # Update generator temperature if provided
+        if temperature is not None:
+            components["generator"].temperature = temperature
 
         # Generate answer
         with st.spinner("Generating answer..."):
@@ -249,7 +254,8 @@ def main():
                 components,
                 top_k=top_k,
                 use_reranking=use_reranking,
-                hybrid_alpha=hybrid_alpha
+                hybrid_alpha=hybrid_alpha,
+                temperature=temperature
             )
 
             if error:
